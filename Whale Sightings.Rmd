@@ -1,0 +1,42 @@
+---
+title: "Whale Sightings"
+author: "Tilina Alzaben"
+date: '2022-06-28'
+output: html_document
+---
+
+```{r setup, echo = FALSE, warning = FALSE, message = FALSE}
+install.packages('leaflet')
+install.packages('gsheet')
+install.packages('dyplyr')
+install.packages('readr')
+
+library(leaflet)
+library(gsheet)
+library(dplyr)
+library(readr) 
+```
+
+```{r}
+# Make a map of the 'whales' dataset
+whales <- read_csv('https://raw.githubusercontent.com/ericmkeen/capstone/master/fin_whales.csv')
+whales %>% View
+```
+
+```{r}
+map <- leaflet() %>% 
+  addProviderTiles(providers$Esri.WorldGrayCanvas) %>% 
+  addCircleMarkers(data = whales, 
+                   radius = whales$size,
+                   label = whales$date, 
+                   clusterOptions = markerClusterOptions())
+
+```
+
+```{r}
+# Take some measurements on this map
+install.packages('leaflet.extras')
+library(leaflet.extras)
+map %>% addDrawToolbar
+```
+
