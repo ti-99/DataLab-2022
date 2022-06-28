@@ -1,0 +1,68 @@
+---
+title: "Movie Analysis"
+author: "Tilina Alzaben"
+date: '2022-06-28'
+output: html_document
+---
+
+```{r}
+library(readr)
+library(dplyr)
+library(ggplot2)
+
+movies <- read_csv('https://raw.githubusercontent.com/ericmkeen/capstone/master/movies.csv')
+movies %>% View
+```
+
+```{r}
+# 1. What are the top five movies in the 90s based off metascore? 
+top_10_movies <- movies %>% filter(year >= 1990 & year < 2000) %>% 
+  arrange(desc(rating_meta)) %>% 
+  head(10) %>% arrange(rating_meta) %>% 
+  mutate(title = factor(title, levels = title ))
+
+ggplot(data = top_10_movies) +
+  geom_col(aes(x = title, 
+               y = rating_meta, 
+               color = title)) +
+  coord_flip() + 
+  labs(y = "Meta Rating", 
+       x = "Title", 
+       title = "Top 10 Movies of the 90s", 
+       caption = "Source: Kaggle") + 
+  scale_color_hue() + 
+  theme(legend.position = "none")
+```
+
+```{r}
+# 2. Top five directors based off highest grossing films? 
+top_5_director = movies %>% 
+  arrange(desc(gross)) %>% 
+  head(7) 
+top_5_director
+
+ggplot(data = top_5_director) + 
+  geom_col(aes(x = director, y = gross, fill = title), position = 'dodge') +
+  labs(title = "Top Five Directors", 
+       subtitle = "Based Off Highest Grossing Films", 
+       x = "Director", 
+       y = "Gross") 
+```
+
+```{r}
+# 3. Matthew McConaughey Popularity over the year
+tom <- movies %>% 
+  filter((star1 == "Tom Hanks" | star2 == "Tom Hanks" | star3 == "Tom Hanks") & year != 'PG') %>% 
+  group_by(year) 
+
+ggplot(data = tom)+ 
+  geom_point(aes(x = year, 
+                 y = rating_imdb, 
+                 size = gross), 
+             alpha = 0.7, 
+             color = 'steelblue') + 
+  labs(title = "Tom Hanks' Movie Popularity Over the Year", 
+       x = 'Year', 
+       y = 'IMDB Rating') 
+```
+
