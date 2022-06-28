@@ -1,0 +1,82 @@
+---
+title: "Baby Names"
+author: "Tilina Alzaben"
+date: '2022-06-28'
+output: html_document
+---
+```{r}
+## Installing the required packages ##
+library(dplyr)
+library(ggplot2)
+library(babynames)
+```
+
+```{r}
+## Drop the prop column ##
+babynames <- babynames %>% 
+  select(year, name, n, sex)
+head(babynames)
+```
+
+```{r}
+## Tally up number of baby names by year and sex ##
+df <- babynames %>% 
+  group_by(year, sex) %>% 
+  tally()
+
+ggplot(data = df, 
+       aes(x = year, y = n, color = sex)) +
+  geom_line() + 
+  labs(title = 'Male vs Female Baby Names', 
+       caption = "DataLab 2022")
+```
+
+```{r}
+## Create one panel for female and one for male ##
+ggplot(data = df, 
+       aes(x=year, y=n)) + 
+  geom_line() +
+  facet_wrap(~sex, ncol = 1) + 
+  labs(title = 'Male vs Female Baby Names', 
+       caption = "DataLab 2022", 
+       x = 'Year', 
+       y='Number of Names')
+```
+
+```{r}
+## Get number of babies per sex ##
+df <- babynames %>% 
+  group_by(year,sex) %>% 
+  summarize(total = sum(n))
+
+ggplot(data=df, 
+       aes(x=year, y=total, color = sex))+
+  geom_line() + 
+  labs(title = 'Total Number of Babies', 
+       subtitle = 'Each Sex Per Year')
+
+```
+
+```{r}
+## Get 16 most popular GenX names ##
+genx <- babynames %>%
+  filter(year >= 1965, year <= 1981) %>%
+  group_by(sex, name) %>% 
+  summarize(total = sum(n)) %>% 
+  slice_max(order_by = total, n = 16) 
+
+## Put the most popular female names in a vector ##
+genx_top16_female <- genx %>% filter(sex == "F") %>% pull(name)
+
+## Extract the most popular female genx names from babynames ##
+df <- babynames %>% 
+  filter(name %in% genx_top16_female, sex == "F")
+
+## Plot them, one panel per name ##
+ggplot(data = df, aes(x=year, y=n, color=name)) +
+  geom_line() + 
+  facet_wrap(~name) + 
+  theme( legend.position = "none")
+
+```
+
