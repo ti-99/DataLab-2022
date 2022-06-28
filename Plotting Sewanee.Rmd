@@ -1,0 +1,46 @@
+---
+title: "Plotting Sewanee"
+output:
+  html_document:
+    df_print: paged
+---
+```{r setup, echo = FALSE}
+## Installing the required packages ##
+# install.packages('dplyr')
+# install.packages('readr')
+# install.packages('knitr')
+# install.packages('gsheet')
+# install.packages('leaflet')
+```
+
+```{r, echo = FALSE, warning = FALSE, message = FALSE}
+library(dplyr)
+library(readr)
+library(knitr)
+library(gsheet)
+library(leaflet)
+```
+
+```{r, echo = FALSE}
+## Reading the data in ##
+url <- gsheet2tbl('https://docs.google.com/spreadsheets/d/1xoecVY2roNzS2gpt8UnvhGhCxrocXjJMpji9eUgiDMw/edit?usp=sharing')
+df <- url[-2,]
+kable(df)
+```
+
+```{r, echo = FALSE, warning = FALSE, message = FALSE}
+## Plotting Sewanee ##
+leaflet() %>% 
+  addProviderTiles(providers$Stamen.Toner) %>% 
+  addCircleMarkers(data = df,
+                   color = 'red', 
+                   radius = 10)
+```
+
+
+
+
+
+
+
+
