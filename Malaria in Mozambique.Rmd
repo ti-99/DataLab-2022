@@ -28,7 +28,7 @@ kable(head(pms))
 ```
 
 # Introduction 
-Regarding Malaria cases in Mozambique, we will identify the change in number of cases from January through December of 2021.
+Regarding Malaria cases in Mozambique, we will identify the change in number of cases from January to December of 2021.
 
 # Methods 
 ```{r}
