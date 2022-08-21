@@ -1,0 +1,51 @@
+---
+title: "Malaria"
+author: "Tilina Alzaben"
+date: '2022-06-09'
+output:
+  word_document: default
+  html_document: default
+  pdf_document: default
+---
+
+```{r, echo = FALSE, warning = FALSE, message = FALSE}
+library(ggplot2)
+library(dplyr)
+library(tidytext)
+library(gsheet)
+library(wordcloud2)
+library(sentimentr)
+library(lubridate)
+library(readr)
+library(knitr)
+```
+
+# Malaria Dataset
+```{r}
+pms <- read_csv('https://github.com/databrew/intro-to-data-science/blob/main/data/pms.csv?raw=true')
+
+kable(head(pms))
+```
+
+# Introduction 
+Regarding Malaria cases in Mozambique, we will identify the change in number of cases from January through December of 2021.
+
+# Methods 
+```{r}
+month <- pms %>% filter(date_visit >= '2021-01-01' & date_visit < '2022-01-01') %>% mutate(mnth = month(date_visit))
+
+cases <- month %>% filter(malaria_diagnosis == "Malaria") %>% group_by(mnth) %>% tally()
+
+kable(cases)
+
+ggplot(data = cases) +
+  geom_line(aes(x=mnth, y=n)) + 
+  scale_x_continuous(breaks = 1:12, labels = month.abb) + 
+  labs(title = 'Number of Malaria Cases in 2021', 
+       x = 'Month', y = 'Number of Cases')
+```
+
+# Results
+We can see that there is a rapid increase in the number of cases from January to April, reaching more than 8000. Shortly after, the number of cases drop down to a little over 5000 at June, but then continue to increase up to October. As the season moves to winter, the number of cases rapidly decrease. 
+
+
